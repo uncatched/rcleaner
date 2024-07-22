@@ -1,0 +1,1 @@
+/Users/denyslitvinskyi/Documents/Projects/Rust/dev-cleaner/target/debug/dev-cleaner: /Users/denyslitvinskyi/Documents/Projects/Rust/dev-cleaner/src/directory.rs /Users/denyslitvinskyi/Documents/Projects/Rust/dev-cleaner/src/main.rs /Users/denyslitvinskyi/Documents/Projects/Rust/dev-cleaner/src/utils.rs
