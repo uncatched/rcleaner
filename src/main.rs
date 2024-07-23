@@ -44,6 +44,24 @@ fn main() {
                 _ => {}
             }
         }
+        "clean" => {
+            let info_sub_cmd = &args[2];
+            match &info_sub_cmd[..] {
+                "all" => {
+                    println!("Cleaning all...");
+                }
+                "derived-data" => {
+                    println!("Cleaning Derived Data...");
+                }
+                "caches" => {
+                    println!("Cleaning Caches");
+                }
+                "devices" => {
+                    println!("Cleaning Simulators");
+                }
+                _ => {}
+            }
+        }
         _ => {}
     }
 }
