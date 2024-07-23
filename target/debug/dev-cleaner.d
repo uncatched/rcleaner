@@ -1,1 +1,0 @@
-/Users/denyslitvinskyi/Documents/Projects/Personal/rcleaner/target/debug/dev-cleaner: /Users/denyslitvinskyi/Documents/Projects/Personal/rcleaner/src/directory.rs /Users/denyslitvinskyi/Documents/Projects/Personal/rcleaner/src/main.rs /Users/denyslitvinskyi/Documents/Projects/Personal/rcleaner/src/utils.rs

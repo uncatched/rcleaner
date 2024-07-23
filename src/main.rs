@@ -26,15 +26,15 @@ fn main() {
                 }
                 "derived-data" => {
                     let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
-                    println!("\n{derived_data}");
+                    println!("{derived_data}");
                 }
                 "caches" => {
                     let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
-                    println!("\n{caches}");
+                    println!("{caches}");
                 }
                 "devices" => {
                     let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
-                    println!("\n{devices}");
+                    println!("{devices}");
                 }
                 _ => {}
             }

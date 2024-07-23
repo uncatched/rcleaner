@@ -1,1 +1,0 @@
-FilterMap<FilterMap<FilterMap<ReadDir, fn(Result<DirEntry, std::io::Error>) -> Option<DirEntry> {Result::<DirEntry, std::io::Error>::ok}>, [closure@src/main.rs:30:21: 30:24]>, [closure@src/main.rs:37:21: 37:24]>
