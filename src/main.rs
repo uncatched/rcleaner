@@ -15,52 +15,56 @@ use directory::Directory;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let cmd = &args[1];
+    handle_command(&args[1], &args);
+}
 
+fn handle_command(cmd: &String, args: &Vec<String>) {
     match &cmd[..] {
-        "info" => {
-            let info_sub_cmd = &args[2];
-            match &info_sub_cmd[..] {
-                "all" => {
-                    let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
-                    let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
-                    let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
-                    println!("{derived_data}");
-                    println!("{caches}");
-                    println!("{devices}");
-                }
-                "derived-data" => {
-                    let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
-                    println!("{derived_data}");
-                }
-                "caches" => {
-                    let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
-                    println!("{caches}");
-                }
-                "devices" => {
-                    let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
-                    println!("{devices}");
-                }
-                _ => {}
-            }
+        "info" => handle_info(&args[2]),
+        "clean" => handle_clean(&args[2]),
+        _ => {}
+    }
+}
+
+fn handle_info(sub_cmd: &String) {
+    match &sub_cmd[..] {
+        "all" => {
+            let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
+            let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
+            let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
+            println!("{derived_data}");
+            println!("{caches}");
+            println!("{devices}");
         }
-        "clean" => {
-            let info_sub_cmd = &args[2];
-            match &info_sub_cmd[..] {
-                "all" => {
-                    println!("Cleaning all...");
-                }
-                "derived-data" => {
-                    println!("Cleaning Derived Data...");
-                }
-                "caches" => {
-                    println!("Cleaning Caches");
-                }
-                "devices" => {
-                    println!("Cleaning Simulators");
-                }
-                _ => {}
-            }
+        "derived-data" => {
+            let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
+            println!("{derived_data}");
+        }
+        "caches" => {
+            let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
+            println!("{caches}");
+        }
+        "devices" => {
+            let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
+            println!("{devices}");
+        }
+        _ => {}
+    }
+}
+
+fn handle_clean(sub_cmd: &String) {
+    match &sub_cmd[..] {
+        "all" => {
+            println!("Cleaning all...");
+        }
+        "derived-data" => {
+            println!("Cleaning Derived Data...");
+        }
+        "caches" => {
+            println!("Cleaning Caches");
+        }
+        "devices" => {
+            println!("Cleaning Simulators");
         }
         _ => {}
     }
