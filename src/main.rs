@@ -5,6 +5,7 @@ mod directory;
 mod utils;
 
 use std::{
+    env,
     ffi::OsStr,
     fs::{self, metadata, ReadDir},
     path::PathBuf,
@@ -13,13 +14,33 @@ use std::{
 use directory::Directory;
 
 fn main() {
-    let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
-    let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
-    let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
+    let args: Vec<String> = env::args().collect();
+    let cmd = &args[1];
 
-    println!("Derived Data:\n{derived_data}");
-    println!("Simulator Caches:\n{caches}");
-    println!("Devices :\n{devices}");
+    match &cmd[..] {
+        "info" => {
+            let info_sub_cmd = &args[2];
+            match &info_sub_cmd[..] {
+                "all" => {
+                    println!("All")
+                }
+                "derived-data" => {
+                    let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
+                    println!("\n{derived_data}");
+                }
+                "caches" => {
+                    let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
+                    println!("\n{caches}");
+                }
+                "devices" => {
+                    let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
+                    println!("\n{devices}");
+                }
+                _ => {}
+            }
+        }
+        _ => {}
+    }
 }
 
 struct Simulator {
