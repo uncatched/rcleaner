@@ -22,7 +22,12 @@ fn main() {
             let info_sub_cmd = &args[2];
             match &info_sub_cmd[..] {
                 "all" => {
-                    println!("All")
+                    let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
+                    let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
+                    let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
+                    println!("{derived_data}");
+                    println!("{caches}");
+                    println!("{devices}");
                 }
                 "derived-data" => {
                     let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
