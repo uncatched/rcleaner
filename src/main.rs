@@ -1,6 +1,7 @@
 #![allow(warnings)]
 
 extern crate plist;
+mod command;
 mod directory;
 mod utils;
 
@@ -58,10 +59,20 @@ fn handle_clean(sub_cmd: &String) {
             println!("Cleaning all...");
         }
         "derived-data" => {
-            println!("Cleaning Derived Data...");
+            let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
+            let path = &derived_data.home_path;
+            match fs::remove_dir_all(path) {
+                Ok(()) => println!("Removed: {derived_data}"),
+                Err(e) => println!("Failed: {e}"),
+            }
         }
         "caches" => {
-            println!("Cleaning Caches");
+            let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
+            let path = &caches.home_path;
+            match fs::remove_dir_all(path) {
+                Ok(()) => println!("Removed: {caches}"),
+                Err(e) => println!("Failed: {e}"),
+            }
         }
         "devices" => {
             println!("Cleaning Simulators");

@@ -8,16 +8,19 @@ use crate::utils;
 
 #[derive(Debug)]
 pub struct Directory<'a> {
-    path: &'a str,
-    size: f64,
+    pub path: &'a str,
+    pub home_path: String,
+    pub size: f64,
 }
 
 impl<'a> Directory<'a> {
     pub fn new(path: &'a str) -> Self {
         let directory_size = check_directory(&path).unwrap();
+        let home_path = utils::home_path_to(&path);
 
         return Directory {
             path: &path,
+            home_path,
             size: directory_size,
         };
     }
