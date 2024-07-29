@@ -22,13 +22,13 @@ fn main() {
 fn handle_command(cmd: &String, args: &Vec<String>) {
     match &cmd[..] {
         "info" => handle_info(&args[2]),
-        "clean" => handle_clean(&args[2]),
+        "clean" => handle_clean(&args[2], &args),
         _ => {}
     }
 }
 
-fn handle_info(sub_cmd: &String) {
-    match &sub_cmd[..] {
+fn handle_info(cmd: &String) {
+    match &cmd[..] {
         "all" => {
             let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
             let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
@@ -46,15 +46,14 @@ fn handle_info(sub_cmd: &String) {
             println!("{caches}");
         }
         "devices" => {
-            let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
-            println!("{devices}");
+            grab_simulators();
         }
         _ => {}
     }
 }
 
-fn handle_clean(sub_cmd: &String) {
-    match &sub_cmd[..] {
+fn handle_clean(cmd: &String, args: &Vec<String>) {
+    match &cmd[..] {
         "all" => {
             println!("Cleaning all...");
         }
@@ -75,7 +74,12 @@ fn handle_clean(sub_cmd: &String) {
             }
         }
         "devices" => {
-            println!("Cleaning Simulators");
+            let udid = &args[3][..];
+            let path = utils::home_path_to("/Library/Developer/CoreSimulator/Devices/") + udid;
+            match fs::remove_dir_all(path) {
+                Ok(()) => println!("Removed: {udid}"),
+                Err(e) => println!("Failed: {e}"),
+            }
         }
         _ => {}
     }
@@ -114,13 +118,13 @@ fn grab_simulators() -> std::io::Result<()> {
         })
         .map(|dir| dir.path())
         .for_each(|dir| {
-            simulator_name(&dir);
+            simulator_info(&dir);
             simulator_size(&dir);
         });
     Ok(())
 }
 
-fn simulator_name(path: &PathBuf) -> std::io::Result<()> {
+fn simulator_info(path: &PathBuf) -> std::io::Result<()> {
     let dir = &mut fs::read_dir(path)?;
 
     dir.filter_map(Result::ok)
@@ -132,16 +136,35 @@ fn simulator_name(path: &PathBuf) -> std::io::Result<()> {
             let name = file.file_name();
             let path = file.path();
             let content = plist::Value::from_file(path).expect("Failed to read device.plist");
-            let name = content
-                .as_dictionary()
-                .and_then(|dict| dict.get("name"))
-                .unwrap()
-                .as_string()
-                .unwrap();
+            let name = simulator_name(&content).expect("Name is not available");
+            let udid = simulator_udid(&content).expect("UUID is not available");
             println!("  -{name}");
+            println!("  -{udid}");
         });
 
     Ok(())
+}
+
+fn simulator_name(plist: &plist::Value) -> std::io::Result<&str> {
+    let name = plist
+        .as_dictionary()
+        .and_then(|dict| dict.get("name"))
+        .unwrap()
+        .as_string()
+        .unwrap();
+
+    return Ok(name);
+}
+
+fn simulator_udid(plist: &plist::Value) -> std::io::Result<&str> {
+    let name = plist
+        .as_dictionary()
+        .and_then(|dict| dict.get("UDID"))
+        .unwrap()
+        .as_string()
+        .unwrap();
+
+    return Ok(name);
 }
 
 fn simulator_size(path: &PathBuf) -> std::io::Result<()> {
