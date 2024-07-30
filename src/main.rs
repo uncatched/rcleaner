@@ -12,24 +12,26 @@ use std::{
     path::PathBuf,
 };
 
+use command::{CleanSubCommand, Command, InfoSubCommand};
 use directory::Directory;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    handle_command(&args[1], &args);
+    let cmd = Command::new(&args);
+
+    handle_cmd(cmd, &args);
 }
 
-fn handle_command(cmd: &String, args: &Vec<String>) {
-    match &cmd[..] {
-        "info" => handle_info(&args[2]),
-        "clean" => handle_clean(&args[2], &args),
-        _ => {}
+fn handle_cmd(cmd: Command, args: &Vec<String>) {
+    match cmd {
+        Command::Info(info_cmd) => handle_info(info_cmd),
+        Command::Clean(clean_cmd) => handle_clean(clean_cmd, &args),
     }
 }
 
-fn handle_info(cmd: &String) {
-    match &cmd[..] {
-        "all" => {
+fn handle_info(cmd: InfoSubCommand) {
+    match cmd {
+        InfoSubCommand::All => {
             let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
             let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
             let devices = Directory::new("/Library/Developer/CoreSimulator/Devices");
@@ -37,27 +39,26 @@ fn handle_info(cmd: &String) {
             println!("{caches}");
             println!("{devices}");
         }
-        "derived-data" => {
+        InfoSubCommand::DerivedData => {
             let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
             println!("{derived_data}");
         }
-        "caches" => {
+        InfoSubCommand::Caches => {
             let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
             println!("{caches}");
         }
-        "devices" => {
+        InfoSubCommand::Simulators => {
             grab_simulators();
         }
-        _ => {}
     }
 }
 
-fn handle_clean(cmd: &String, args: &Vec<String>) {
-    match &cmd[..] {
-        "all" => {
+fn handle_clean(cmd: CleanSubCommand, args: &Vec<String>) {
+    match cmd {
+        CleanSubCommand::All => {
             println!("Cleaning all...");
         }
-        "derived-data" => {
+        CleanSubCommand::DerivedData => {
             let derived_data = Directory::new("/Library/Developer/Xcode/DerivedData");
             let path = &derived_data.home_path;
             match fs::remove_dir_all(path) {
@@ -65,7 +66,7 @@ fn handle_clean(cmd: &String, args: &Vec<String>) {
                 Err(e) => println!("Failed: {e}"),
             }
         }
-        "caches" => {
+        CleanSubCommand::Caches => {
             let caches = Directory::new("/Library/Developer/CoreSimulator/Caches");
             let path = &caches.home_path;
             match fs::remove_dir_all(path) {
@@ -73,8 +74,8 @@ fn handle_clean(cmd: &String, args: &Vec<String>) {
                 Err(e) => println!("Failed: {e}"),
             }
         }
-        "devices" => {
-            let udid = &args[3][..];
+        CleanSubCommand::Simulators(udid) => {
+            let udid = &udid[..];
             let path = utils::home_path_to("/Library/Developer/CoreSimulator/Devices/") + udid;
             match fs::remove_dir_all(path) {
                 Ok(()) => println!("Removed: {udid}"),
